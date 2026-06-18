@@ -8,6 +8,8 @@
     "client"
   ],
   "scripts": {
+    "build": "npm run build --prefix client",
+    "start": "npm run start --prefix server",
     "seed": "npm run seed --prefix server",
     "migrate:materials": "npm run migrate:materials --prefix server",
     "migrate:soft-delete": "npm run migrate:soft-delete --prefix server",

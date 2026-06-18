@@ -85,3 +85,71 @@ API_PROXY_TARGET=http://127.0.0.1:4000
 - Completed project report export
 - CSV/PDF export and print-friendly tables
 - Responsive desktop sidebar and compact mobile navigation
+
+## Deploy To Render
+
+This repository includes `render.yaml` and deploys as one Render Web Service. Express serves both the REST API and the built React application.
+
+### 1. Create MongoDB Atlas
+
+1. Create a MongoDB Atlas cluster and database user.
+2. Add an Atlas IP access-list entry that permits the Render service to connect.
+3. Copy the Atlas application connection string.
+4. Keep `/civil_management` as the database name in the URI.
+
+### 2. Push To GitHub
+
+Make sure the latest code is committed and pushed to the `main` branch. Do not commit `.env`.
+
+### 3. Create The Render Service
+
+1. In Render, select **New > Blueprint**.
+2. Connect this GitHub repository.
+3. Render reads `render.yaml` and creates the Node web service.
+4. The configured commands are:
+
+```text
+Build Command: npm install && npm run build
+Start Command: npm start
+Health Check: /api/health
+```
+
+### 4. Add The Production `.env` Secret File
+
+In the Render service, open **Environment > Secret Files > Add Secret File**.
+
+Use the filename:
+
+```text
+.env
+```
+
+Copy `.env.render.example` into the contents field and replace every placeholder:
+
+```env
+MONGODB_URI=mongodb+srv://USERNAME:PASSWORD@CLUSTER.mongodb.net/civil_management?retryWrites=true&w=majority
+JWT_SECRET=replace-with-a-long-random-production-secret
+PORT=10000
+CLIENT_ORIGIN=https://YOUR-SERVICE-NAME.onrender.com
+VITE_API_URL=/api
+API_PROXY_TARGET=http://127.0.0.1:10000
+ADMIN_NAME=Admin Manager
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=replace-with-a-strong-admin-password
+```
+
+Render makes the secret file available at `/etc/secrets/.env`. The server explicitly loads that file when running on Render.
+
+### 5. Deploy
+
+Save the secret file and choose **Save, rebuild, and deploy**. The first successful startup creates the configured admin user only if it does not already exist.
+
+Open:
+
+```text
+https://YOUR-SERVICE-NAME.onrender.com
+```
+
+Log in with `ADMIN_USERNAME` and `ADMIN_PASSWORD`.
+
+Do not run `npm run seed` against a production database after real data has been entered because the seed script clears existing collections.
