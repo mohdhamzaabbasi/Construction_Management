@@ -1,0 +1,20 @@
+{
+  "name": "construction-project-expense-profit-manager",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Construction Project Expense & Profit Manager",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "seed": "npm run seed --prefix server",
+    "migrate:materials": "npm run migrate:materials --prefix server",
+    "migrate:soft-delete": "npm run migrate:soft-delete --prefix server",
+    "migrate:snapshots": "npm run migrate:snapshots --prefix server",
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
